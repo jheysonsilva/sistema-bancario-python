@@ -1,142 +1,74 @@
-# sistema-bancario-python
-def depositar(valor, saldo, extrato, /):
-    if valor > 0:
-        saldo += valor
-        extrato += f"Depósito: R$ {valor:.2f}\n"
-        print("Depósito realizado com sucesso.")
-    else:
-        print("Operação falhou! O valor informado é inválido.")
-    return saldo, extrato
+# 💰 Sistema Bancário em Python
 
+Este projeto é um **sistema bancário de linha de comando** desenvolvido em Python, com foco na **modularização de funções**, **cadastro de usuários** e **criação de contas correntes**. Ele foi construído como um exercício prático para reforçar conceitos de **funções, listas, dicionários, controle de fluxo e boas práticas em Python**.
 
-def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
-    if valor > saldo:
-        print("Operação falhou! Você não tem saldo suficiente.")
-    elif valor > limite:
-        print("Operação falhou! O valor do saque excede o limite.")
-    elif numero_saques >= limite_saques:
-        print("Operação falhou! Número máximo de saques excedido.")
-    elif valor > 0:
-        saldo -= valor
-        extrato += f"Saque: R$ {valor:.2f}\n"
-        numero_saques += 1
-        print("Saque realizado com sucesso.")
-    else:
-        print("Operação falhou! O valor informado é inválido.")
-    return saldo, extrato, numero_saques
+---
 
+## 📋 Funcionalidades
 
-def exibir_extrato(saldo, /, *, extrato):
-    print("\n================ EXTRATO ================")
-    print("Não foram realizadas movimentações." if not extrato else extrato)
-    print(f"\nSaldo: R$ {saldo:.2f}")
-    print("==========================================")
+* Criar usuários com nome, CPF e endereço completo.
+* Criar contas bancárias associadas a um usuário existente.
+* Realizar **depósitos** e **saques** com validações.
+* Emitir o **extrato bancário** com saldo e histórico de transações.
+* Controlar **limite de valor e quantidade de saques** diários.
 
+---
 
-def criar_usuario(usuarios):
-    cpf = input("Informe o CPF (somente números): ").strip()
-    cpf = ''.join(filter(str.isdigit, cpf))
+## 🛠 Tecnologias Utilizadas
 
-    if filtrar_usuario(cpf, usuarios):
-        print("Já existe um usuário com esse CPF!")
-        return
+* **Python 3.x**
+* Terminal / Console
+* Programação procedural com funções reutilizáveis
+* Argumentos `positional-only` e `keyword-only`
 
-    nome = input("Informe o nome completo: ").strip()
-    nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ").strip()
-    endereco = input("Informe o endereço (logradouro, nro, bairro, cidade - UF): ").strip()
+---
 
-    usuarios.append({
-        "nome": nome,
-        "data_nascimento": nascimento,
-        "cpf": cpf,
-        "endereco": endereco
-    })
+## ⚙️ Como funciona
 
-    print("Usuário criado com sucesso!")
+### 📁 Estrutura
 
+```python
+menu()           # Interface principal do sistema
+deposito()       # Função para depósitos (somente argumentos por posição)
+saque()          # Função para saques (somente argumentos nomeados)
+exibir_extrato() # Função para exibir o extrato da conta
+criar_usuario()  # Cadastro de novos clientes (evita CPF duplicado)
+criar_conta()    # Criação de contas bancárias vinculadas a usuários
+filtrar_usuario()# Função de apoio para buscar CPF na lista de usuários
+```
 
-def filtrar_usuario(cpf, usuarios):
-    return next((usuario for usuario in usuarios if usuario["cpf"] == cpf), None)
+---
 
+## ✅ Regras de Negócio
 
-def criar_conta(agencia, numero_conta, usuarios):
-    cpf = input("Informe o CPF do usuário: ").strip()
-    usuario = filtrar_usuario(cpf, usuarios)
+* Um **CPF não pode ser duplicado**.
+* Um **usuário pode ter várias contas**, mas uma **conta só pertence a um usuário**.
+* O número da agência é fixo: `0001`.
+* O **número da conta é sequencial**, começando em 1.
+* Só é possível realizar **três saques por dia**, com limite de R\$500 por saque.
+* O extrato exibe todas as movimentações e o saldo atual.
 
-    if usuario:
-        print("Conta criada com sucesso!")
-        return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
-    else:
-        print("Usuário não encontrado. Conta não criada.")
+---
 
+## ▶️ Como executar
 
-# =========================
-# Programa Principal
-# =========================
+1. Tenha o Python instalado (`python --version`)
+2. Clone o repositório:
 
-def main():
-    AGENCIA = "0001"
-    saldo = 0
-    limite = 500
-    extrato = ""
-    numero_saques = 0
-    LIMITE_SAQUES = 3
-    usuarios = []
-    contas = []
-    numero_conta = 1
+   ```bash
+   git clone https://github.com/seu-usuario/sistema-bancario-python.git
+   cd sistema-bancario-python
+   ```
+3. Execute o script:
 
-    menu = """
-    [d] Depositar
-    [s] Sacar
-    [e] Extrato
-    [nu] Novo Usuário
-    [nc] Nova Conta
-    [lc] Listar Contas
-    [q] Sair
-    => """
+   ```bash
+   python sistema_bancario.py
+   ```
 
-    while True:
-        opcao = input(menu).strip().lower()
+---
 
-        if opcao == "d":
-            valor = float(input("Informe o valor do depósito: "))
-            saldo, extrato = depositar(valor, saldo, extrato)
+## ✍️ Autor
 
-        elif opcao == "s":
-            valor = float(input("Informe o valor do saque: "))
-            saldo, extrato, numero_saques = sacar(
-                saldo=saldo,
-                valor=valor,
-                extrato=extrato,
-                limite=limite,
-                numero_saques=numero_saques,
-                limite_saques=LIMITE_SAQUES
-            )
+Desenvolvido por \ Jheyson Silva Siqueira  🧠
+Projeto de estudo baseado nos desafios da [DIO - Digital Innovation One](https://www.dio.me)
 
-        elif opcao == "e":
-            exibir_extrato(saldo, extrato=extrato)
-
-        elif opcao == "nu":
-            criar_usuario(usuarios)
-
-        elif opcao == "nc":
-            conta = criar_conta(AGENCIA, numero_conta, usuarios)
-            if conta:
-                contas.append(conta)
-                numero_conta += 1
-
-        elif opcao == "lc":
-            for conta in contas:
-                print(f"\nAgência: {conta['agencia']}")
-                print(f"Número da Conta: {conta['numero_conta']}")
-                print(f"Titular: {conta['usuario']['nome']}")
-
-        elif opcao == "q":
-            print("Saindo do sistema...")
-            break
-
-        else:
-            print("Operação inválida. Tente novamente.")
-
-# Executa o programa
-main()
