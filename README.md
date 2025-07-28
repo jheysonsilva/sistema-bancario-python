@@ -6,7 +6,7 @@ Este projeto é um **sistema bancário de linha de comando** desenvolvido em Pyt
 
 ## 📋 Funcionalidades
 
-* Criar usuários com nome, CPF e endereço completo.
+* Criar usuários com nome, CPF e endereço completo. 
 * Criar contas bancárias associadas a um usuário existente.
 * Realizar **depósitos** e **saques** com validações.
 * Emitir o **extrato bancário** com saldo e histórico de transações.
